@@ -33,7 +33,7 @@ The SteamReport website has the following functionalities :
 - Steam Username
 - Steam Level
 
-## Link to website:
+## Link to Website:
 - https://steamreport.info
 
 ## Libraries:
@@ -48,3 +48,5 @@ The SteamReport website has the following functionalities :
 - https://koajs.com/
 - https://axios-http.com/docs/intro
 
+## Link to Design Doc:
+- https://docs.google.com/document/d/1NsQpsiJYvPKw47F2mPSUDj_CwQMHKcYnpf82fXE6cSM/edit?usp=sharing
