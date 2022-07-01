@@ -40,7 +40,8 @@ The SteamReport website has the following functionalities :
 - Node.JS: https://nodejs.org/en/
 - Steam Api Wrapper: https://www.npmjs.com/package/steamapi
 
-Javascript libraries:
+
+**Javascript libraries:**
 - https://momentjs.com/
 - https://expressjs.com/en/starter/installing.html
 - https://handlebarsjs.com/installation/
