@@ -50,3 +50,6 @@ The SteamReport website has the following functionalities :
 
 ## Link to Design Doc:
 - https://docs.google.com/document/d/1NsQpsiJYvPKw47F2mPSUDj_CwQMHKcYnpf82fXE6cSM/edit?usp=sharing
+
+## Link to Initial GitHub Repository:
+- https://github.com/MyUsernameisAstro/SteamReport
