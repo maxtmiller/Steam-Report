@@ -8,12 +8,12 @@ The SteamReport website has the following functionalities :
 - Loads basic user info
 - Recommends games based on owned games
 
-**Sort Games by**
+**Sort Games by:**
 - Price
 - Genre
 - Category
 
-**Pull Game Info**
+**Pull Game Info:**
 - Price (free or payed)
 - News (Recent Updates)
 - Player Count
@@ -22,7 +22,7 @@ The SteamReport website has the following functionalities :
 - Achievements
 - Images
 
-**Pull Player Info**
+**Pull Player Info:**
 - Hours Played on games
 - Game/Vac Bans
 - Number of Friends & Groups
@@ -33,9 +33,9 @@ The SteamReport website has the following functionalities :
 - Steam Username
 - Steam Level
 
-## Link to website
+## Link to website:
 - https://steamreport.info
 
-## Libraries
+## Libraries:
 - Node.JS: https://nodejs.org/en/
 - Steam Api Wrapper: https://www.npmjs.com/package/steamapi
