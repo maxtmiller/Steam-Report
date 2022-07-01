@@ -34,6 +34,5 @@ The SteamReport website has the following functionalities
 https://steamreport.info
 
 ## Libraries
-- Made with Node.JS: https://nodejs.org/en/
-- API Wrapper used: https://www.npmjs.com/package/steamapi
-- Steam Login w/ PhP: https://github.com/mbouldo/login-with-steam-php
+- Node.JS: https://nodejs.org/en/
+- Steam Api Wrapper: https://www.npmjs.com/package/steamapi
