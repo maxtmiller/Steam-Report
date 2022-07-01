@@ -1,24 +1,26 @@
 # SteamReport
-A simple website that displays data regarding steam games and users using the Steam Web API
+A simple website that displays data regarding steam games and users using the Steam Web API along with making recommendations about games they might enjoy.
 
 # Functionalities
-The SteamReport website has the following functionalities 
-
-**Basic Functionality**
-- Load games owned by people
-- Load recent games
-- Load game news and displays what's new
-
+The SteamReport website has the following functionalities :
+- Loads games owned by people
+- Loads recent games
+- Loads basic user info
+- Recommends games based on owned games
 
 **Sort Games by**
-- Price Range
+- Price
 - Genre
+- Category
 
 **Pull Game Info**
-- Price
-- News
+- Price (free or payed)
+- News (Recent Updates)
 - Player Count
+- Genre (Action, Adventure, Horror...)
+- Category - (Multiplayer, Single player...)
 - Achievements
+- Images
 
 **Pull Player Info**
 - Hours Played on games
@@ -28,10 +30,11 @@ The SteamReport website has the following functionalities
 - Steam Client Status (Online/Offline/Away)
 - Date of Account Creation
 - Last Login to Steam
-
+- Steam Username
+- Steam Level
 
 ## Link to website
-https://steamreport.info
+- https://steamreport.info
 
 ## Libraries
 - Node.JS: https://nodejs.org/en/
