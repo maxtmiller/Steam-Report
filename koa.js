@@ -189,17 +189,6 @@ app.use(async ctx => {
                     gameIDList.push(games[x].appID.toString());
                 }
 
-                /*for (let x = 0; x < gameIDList; x++) {
-                    try {
-                        gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
-                        if (gameDetails.type == 'game' && !gamesWithoutApps.some(game => game.name == gameDetails.name)) {
-                            gameTime = gameTime + gameDetails.genres;
-                        }
-                    } catch (error) {
-                        //console.log(error);
-                    }
-                }*/
-
                 for (let x = 0; x < 11; x++) {
                     try {
                         gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
@@ -351,7 +340,7 @@ app.use(async ctx => {
             //console.log(`The current screen width is ${screen.width}`);
             //console.log("Total Game Time: " + gameTimeTotal);
             //console.log("Recent Game Time: " + gameTimeNew);
-            console.log("genres array: " + gameGenres)
+            //console.log("genres array: " + gameGenres)
             
 
             let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
