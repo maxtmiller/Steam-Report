@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content='True' name='HandheldFriendly' />
+    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
+    <title>
+        {{#if admin}}
+            Steam Report Pro - Account View
+        {{else}}
+            Steam Report - Account View
+        {{/if}}
+    </title>
+        {{#if admin}}
+            <link rel="icon" type="image/x-icon" href="https://icones.pro/wp-content/uploads/2022/05/icone-steam-violet.png">
+        {{else}}
+            <link rel="icon" type="image/x-icon" href="https://www.pngkey.com/png/full/332-3321794_steam-logo-png-transparent-ebay-steam-gift-card.png">
+        {{/if}}
+    <style>
+        *,
+        html {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: rgb(42, 21, 66);
+        }
+
+        .center {
+            width: 100%;
+            height: 50%;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: "Trebuchet MS", Helvetica, sans-serif;
+            text-align: center;
+        }
+
+        .centeredNoGame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .centered {
+            margin-top: 300px;
+        }
+
+
+        .plots {
+            white-space: nowrap;
+            display: flex;
+            justify-content:space-around;
+        }
+
+        .title {
+            margin-top: 40px;
+            margin-bottom: 40px;
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+
+        .centerElements {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-right: 15px;
+            margin-left: 15px;
+        }
+
+        .leftElement {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+
+        .rightElement {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+
+        .footer {
+            margin-top: 100px;
+            margin-bottom: 0px;
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+
+        h1 {
+            font-size: 100px;
+            text-align: center;
+            color: rgb(17, 207, 255);
+        }
+
+        h2 {
+            font-size: 60px;
+            text-align: center;
+            color: rgb(17, 207, 255);
+        }
+
+        h3 {
+            font-size: 40px;
+            text-align: center;
+            color: rgb(0, 0, 0);
+        }
+
+        p {
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .about {
+            font-size: 20px;
+            text-align: center;
+            color: rgb(163, 163, 163);
+        }
+
+        .levelG {
+            font-size: 25px;
+            text-align: center;
+            color: rgb(163, 163, 163);
+        }
+
+        .red {
+            color:#B80F0A;
+        }
+
+        .orange {
+            color:#FFA500;
+        }
+
+        .yellow {
+            color: #FFD300;
+        }
+
+        .lightgreen {
+            color: #12E772;
+        }
+
+        .lightblue {
+            color: #0077B6;
+        }
+
+        .placeholder {
+            color: #001C57;
+        }
+
+        .turquoise {
+            color:#3BD6C6;
+        }
+
+        .purple {
+            color: #934AB3;
+        }
+
+        .pink {
+            color: #C6267B;
+        }
+
+        .usernamePlaceholder {
+            color: rgb(193, 193, 193);
+        }
+
+        .usernameStyle {
+            font-size: 50px;
+        }
+
+        .bolded { font-weight: bold; }
+
+        .gameOwnedName {
+            font-family: "Trebuchet MS", Helvetica, sans-serif;
+            font-size: 12px;
+            color: #001C57;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .gameOwnedSpent {
+            font-family: "Trebuchet MS", Helvetica, sans-serif;
+            font-size: 15px;
+            color: #001C57;
+            margin-top: 185px;
+        }
+
+        #profile-picture {
+            height: 626px;
+            width: 600px;
+            border: 3px solid black;
+            border-style: solid;
+            
+            margin-right: 25px;
+            margin-bottom: 30;
+            border-radius: 10px
+        }
+
+        #dot_1 {
+            height: 20px;
+            width: 20px;
+            border: 1px solid #000000;
+            border-style: solid;
+            background-color: rgb(0, 255, 8);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        #dot_2 {
+            height: 20px;
+            width: 20px;
+            border: 1px solid #000000;
+            border-style: solid;
+            background-color: rgb(62, 65, 62);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        #rectangle1 {
+            height: 125px;
+            width: 2460px;
+            border: 2px solid #C1C1C1;
+            border-style: solid;
+            background-color: rgb(0, 0, 0);
+            border-radius: 10px;
+        }
+
+        #rectangle2 {
+            height: 626px;
+            width: 600px;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+
+            margin-right: 25px;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-1-1 {
+            height: 50px;
+            width: 1000px;
+            border: 1px solid black;
+            border-style: solid;
+            background-color: rgb(96, 94, 94);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-1-2 {
+            height: 50px;
+            width: 1000px;
+            border: 1px solid black;
+            border-style: solid;
+            background-color: rgb(136, 14, 14);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-1-3 {
+            height: 50px;
+            width: 1000px;
+            border: 1px solid black;
+            border-style: solid;
+            background-color: rgb(153, 82, 11);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-1-4 {
+            height: 50px;
+            width: 1000px;
+            border: 1px solid black;
+            border-style: solid;
+            background-color: rgb(18, 167, 73);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-1-5 {
+            height: 50px;
+            width: 1000px;
+            border: 1px solid black;
+            border-style: solid;
+            background-color: #001C57;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-1 {
+            height: 80px;
+            width: 1000px;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        #rectangle3-1-2 {
+            height: 66px;
+            width: 1000px;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+        
+        #rectangle3-2-1 {
+            height: 150px;
+            width: 490px;
+            position: relative;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 30px;
+            
+            border-radius: 10px;
+        }
+
+        #rectangle3-2-2 {
+            height: 144px;
+            width: 144px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        #rectangle3-2-3 {
+            height: 150px;
+            width: 490px;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        #rectangle3-3 {
+            height: 150px;
+            width: 1000px;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        #rectangle3-4 {
+            height: 140px;
+            width: 1000px;
+            border: 3px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        #rectangle4 {
+            height: 80px;
+            width: 780px;
+            border: 1px solid #C1C1C1;
+            border-style: solid;
+            background-color: rgb(0, 0, 0);
+            
+            margin-bottom: 2px;
+            border-radius: 10px;
+        }
+
+        #rectangle5 {
+            height: 1342px;
+            width: 780px;
+            border: 3px solid rgb(42, 21, 66);
+            border-style: solid;
+            background-color: rgb(42, 21, 66);
+            
+            border-radius: 10px;
+        }
+
+        #rectangle5-1-1 {
+			height: 250px;
+            width: 390px;
+            position: relative;
+            border: 2px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            border-radius: 15px;
+			
+			margin-right: 10px;
+			margin-top: 19px;
+		}
+		
+		#rectangle-5-1-2 {
+			height: 250px;
+            width: 390px;
+            position: relative;
+            border: 2px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            text-align: center;
+            
+            border-radius: 15px;
+			margin-top: 19px;
+		}
+
+        #rectangle-5-2 {
+			height: 175px;
+            width: 340px;
+            border: 1px solid black;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            margin-right: 20px;
+            border-radius: 5px;
+		}
+
+        #gameImage-1 {
+            height: 175px;
+            width: 340px;
+            position: absolute;
+            border: 1px solid black;
+            border-style: solid;
+            margin-left: 20px;
+            border-radius: 5px;
+        }
+
+        #gameImage-2 {
+            height: 175px;
+            width: 340px;
+            position: absolute;
+            border: 1px solid black;
+            border-style: solid;
+            margin-left: -170px;
+            border-radius: 5px;
+        }
+
+        #rectangle6 {
+            height: 70px;
+            width: 1630px;
+            border: 1px solid #C1C1C1;
+            border-style: solid;
+            background-color: rgb(0, 0, 0);
+            
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        #rectangle7 {
+            height: 687px;
+            width: 1630px;
+            border: 3px solid #000000;
+            border-style: solid;
+            background-color: rgb(193, 193, 193);
+            
+            margin-top: 20px;
+            
+            border-radius: 10px;
+        }
+
+        #rectangle8 {
+            height: 3px;
+            width: 2000px;
+            background-color: rgb(163, 163, 163);
+            margin-left: 273px;
+        }
+
+        #rectangle9 {
+            height: 230px;
+            width: 2543px;
+            background-color: rgb(50, 21, 66);
+            
+        }
+
+        #rectangle10 {
+            height: 80px;
+            width: 2543px;
+            background-color: rgb(50, 21, 66);
+        }
+
+        #rectangle11 {
+            height: 20px;
+            width: 2543px;
+            background-color: rgb(50, 21, 66);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="plots">
+            <div class="title">
+                <div id="rectangle1"><h1>
+                        {{#if admin}}
+                            Steam Report Pro
+                        {{else}}
+                            Steam Report
+                        {{/if}}
+                </h1></div>
+            </div>
+        </div>
+        <div class="centerElements">
+            <div class="plots">
+                <div class="leftElement">
+                    <div class="plots">
+                        <img src="{{summary.avatar.large}}" id="profile-picture"/>
+                        <div>
+                            {{#if level0}}
+                                <div id="rectangle3-1-1-1"><span><p>Level {{level}}</p></span></div>                    
+                            {{else if level10}}
+                                <div id="rectangle3-1-1-2"><span><p>Level {{level}}</p></span></div>                      
+                            {{else if level20}}
+                                <div id="rectangle3-1-1-3"><span><p>Level {{level}}</p></span></div>  
+                            {{else if levelT}}
+                                <div id="rectangle3-1-1-4"><span><p>Level {{level}}</p></span></div> 
+                            {{else if levelG}} 
+                                <div id="rectangle3-1-1-5"><span><p>
+                                    <div class="plots">
+                                        <p class="red">L</p><p class="orange">e</p><p class="yellow">v</p><p class="lightgreen">e</p><p class="lightblue">l</p>
+                                        <p class="placeholder">n</p>
+                                        <p class="turquoise">A</p><p class="purple">d</p><p class="pink">m</p><p class="red">i</p><p class="orange">n</p>
+                                    </div>
+                                </p></span></div>
+                            {{/if}}
+                            <div class="plots">
+                                <div id="rectangle3-1-1"><span><div class="plots">
+                                    <h3 class="usernameStyle">{{summary.nickname}}</h3>
+                                    <p class="usernamePlaceholder">ll</p>
+                                    {{#if online}}
+                                        <div id="dot_1"></div>
+                                    {{else}}
+                                        <div id="dot_2"></div>
+                                    {{/if}}
+                                    <p class="usernamePlaceholder">llll</p>
+                                    <h3 class="usernameStyle">-</h3>
+                                    <p class="usernamePlaceholder">llll</p>
+                                    <h3 class="usernameStyle">{{personaState}}</h3>
+                                </div></span></div>
+                            </div>
+                            <div id="rectangle3-1-2"><span><h3>Account Created - {{creationDate}}</h3></span></div>
+                            <div id="rectangle3-1-2"><span><h3>Last Online - {{lastOnline}}</h3></span></div>
+                            <div id="rectangle3-1-2"><span><h3>
+                                {{#if friendsPrivate}}
+                                    Friends: Private
+                                {{else}}
+                                    Number of Friends: {{friends.length}}
+                                {{/if}}
+                            </h3></span></div>
+                            <div id="rectangle3-1-2"><span><h3>
+                                {{#if gamesPrivate}}
+                                    Owned Games: Private
+                                {{else}}
+                                    Owned Games: {{games.length}}
+                                {{/if}}
+                            </h3></span></div>
+                            <div id="rectangle3-1-2"><span><h3>
+                                {{#if isBanned}}
+                                    Bans: <a href="https://help.steampowered.com/en/faqs/view/4F62-35F9-F395-5C23#restrictiontypes">Yes - {{daysSinceBan}} days ago</a>
+                                {{else}}
+                                    Bans: None
+                                {{/if}}
+                            </h3></span></div>
+                        </div>
+                    </div>
+                    <div id="rectangle6"><h2>Recommended Games</h2></div>
+                    <div id='rectangle7'>
+                        <div class="centered">
+                            <h3>Work in Progress</h3>>
+                        </div>
+                    </div>
+                </div>
+                <div class="rightElement">
+                    <div id='rectangle4'><h2>Owned Games</h2></div>
+                    <div id="rectangle5">
+                        <div class="plots">
+                            <div id = "rectangle5-1-1">
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[0].name}} - {{gamesWithoutApps.[0].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[0].background_raw}} id="gameImage-1"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[0].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[0].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div id = "rectangle-5-1-2">
+                                {{#if gameLength1}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[1].name}} - {{gamesWithoutApps.[1].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[1].background_raw}} id="gameImage-2"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[1].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[1].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="plots">
+                            <div id = "rectangle5-1-1">
+                                {{#if gameLength2}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[2].name}} - {{gamesWithoutApps.[2].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[2].background_raw}} id="gameImage-1"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[2].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[2].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div id = "rectangle-5-1-2">
+                                {{#if gameLength3}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[3].name}} - {{gamesWithoutApps.[3].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[3].background_raw}} id="gameImage-2"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[3].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[3].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="plots">
+                            <div id = "rectangle5-1-1">
+                                {{#if gameLength4}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[4].name}} - {{gamesWithoutApps.[4].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[4].background_raw}} id="gameImage-1"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[4].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[4].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div id = "rectangle-5-1-2">
+                                {{#if gameLength5}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[5].name}} - {{gamesWithoutApps.[5].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[5].background_raw}} id="gameImage-2"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[5].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[5].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="plots">
+                            <div id = "rectangle5-1-1">
+                                {{#if gameLength6}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[6].name}} - {{gamesWithoutApps.[6].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[6].background_raw}} id="gameImage-1"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[6].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[6].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div id = "rectangle-5-1-2">
+                                {{#if gameLength7}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[7].name}} - {{gamesWithoutApps.[7].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[7].background_raw}} id="gameImage-2"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[7].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[7].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="plots">
+                            <div id = "rectangle5-1-1">
+                                {{#if gameLength8}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[8].name}} - {{gamesWithoutApps.[8].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[8].background_raw}} id="gameImage-1"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[8].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[8].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div id = "rectangle-5-1-2">
+                                {{#if gameLength9}}
+                                    <div class="centeredNoGame">
+                                        <p>No Games to Display</p>
+                                    </div>
+                                {{else}}
+                                    <p class="gameOwnedName"> <span class="bolded">{{gamesWithoutApps.[9].name}} - {{gamesWithoutApps.[9].genres.[0].description}}</span></p>
+                                    <img src={{gamesWithoutApps.[9].background_raw}} id="gameImage-2"/>
+                                    <div class="plots">
+                                        <p class="gameOwnedSpent"> Recent: {{games.[9].playTime2}} hours</p>
+                                        <p class="gameOwnedSpent"> Total Time: {{games.[9].playTime}} hours</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div id='rectangle9'>
+            <div id='rectangle10'></div>
+            <div>
+                <div id='rectangle8'></div>
+                <div id='rectangle11'></div>
+                <div class="about">
+                    ® 2022 Steam Report Inc. All rights reserved. All trademarks are property of their respective owners in the US and other countries. VAT included in all prices where applicable. Any external use of any material on this page will lead to court.
+                </div>
+                <div id='rectangle11'></div>
+                <div id='rectangle8'></div>
+            </div>
+            <div id='rectangle10'></div>
+        </div>
+    </div>
+    
+</body>
+
+</html>
