@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const app = new Koa();
 const SteamAPI = require('steamapi');
-const steam = new SteamAPI('CEFCED59261F8C680BB9C97B28422B38');
+const steam = new SteamAPI('X');
 const Handlebars = require("handlebars");
 var moment = require('moment');
 const e = require('express');
