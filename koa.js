@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const app = new Koa();
 const SteamAPI = require('steamapi');
-const steam = new SteamAPI('X');
+const steam = new SteamAPI('CEFCED59261F8C680BB9C97B28422B38');
 const Handlebars = require("handlebars");
 var moment = require('moment');
 const e = require('express');
@@ -20,6 +20,7 @@ app.use(async ctx => {
         let bans = await steam.getUserBans(id);
         let player = await steam.getGamePlayers('730');
         let summary = await steam.getUserSummary(id);
+        let featuredGames = await steam.getFeaturedGames();
         let creationDate = moment.unix(summary.created).format("MMM Do YYYY");
         let lastOnline = moment.unix(summary.lastLogOff).format("MMM Do YYYY");
         let daysSinceBan = bans.daysSinceLastBan;
@@ -29,8 +30,12 @@ app.use(async ctx => {
         const gamesWithoutApps = [];
         const gameGenres = [];
         const gameGenresAmount = [];
-        const isFree = [];
+        const gameFree = [true, false];
+        const gameFreeAmount = [];
         const gameCategories = [];
+        const gameCategoriesAmount = [];
+        let RecommendationScore = 0;
+        let calcTotal = 0;
         let gameTimeTotal = 0;
         let gameTimeNew = 0;
         let level = await steam.getUserLevel(id);
@@ -252,10 +257,133 @@ app.use(async ctx => {
                         } else if (gameDetails.genres[0].description == gameGenres[0]) {
                             gameGenresAmount[0]
                         }
-                        
 
+                        if (contains(gameCategories, gameDetails.categories[0].description) == false) {
+                            //console.log(gameCategories);
+                            gameCategories.push(gameDetails.categories[0].description);
+                        } else if (gameDetails.categories[0].description == gameCategories[0]) {
+                            gameCategoriesAmount[0]
+                        }
+                        
                     } catch (error) {
                         //console.log(error);
+                    }
+                }
+
+                
+                for (let x = 0; x < gameGenres.length; x++) {
+                    gameGenresAmount.push(0);
+                }
+                for (let x = 0; x < gamesWithoutApps.length; x++) {
+                    gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
+                    for (let y = 0; y < gameGenres.length; y++) {
+                        if (gameGenres[y] == gameDetails.genres[0].description) {
+                            gameGenresAmount[y] = gameGenresAmount[y] + 1;
+                            //console.log(gameDetails.genres[0].description)
+                        }
+                    }
+                    calcTotal = calcTotal + 1;
+                }
+                for (let x = 0; x < gameGenresAmount.length; x++) {
+                    gameGenresAmount[x] = Math.round((gameGenresAmount[x] / calcTotal) * 100);
+                }
+
+
+                for (let x = 0; x < gameCategories.length; x++) {
+                    gameCategoriesAmount.push(0);
+                }
+                for (let x = 0; x < gamesWithoutApps.length; x++) {
+                    gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
+                    for (let y = 0; y < gameCategories.length; y++) {
+                        if (gameCategories[y] == gameDetails.categories[0].description) {
+                            gameCategoriesAmount[y] = gameCategoriesAmount[y] + 1;
+                            //console.log(gameDetails.categories[0].description)
+                        }
+                    }
+                }
+                for (let x = 0; x < gameCategoriesAmount.length; x++) {
+                    gameCategoriesAmount[x] = Math.round((gameCategoriesAmount[x] / calcTotal) * 100);
+                }
+
+                for (let x = 0; x < gameFree.length; x++) {
+                    gameFreeAmount.push(0);
+                }
+                for (let x = 0; x < gamesWithoutApps.length; x++) {
+                    gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
+                    for (let y = 0; y < gameFree.length; y++) {
+                        if (gameFree[y] == gameDetails.is_free) {
+                            gameFreeAmount[y] = gameFreeAmount[y] + 1;
+                            //console.log(gameDetails.is_free)
+                        }
+                    }
+                }
+                for (let x = 0; x < gameFreeAmount.length; x++) {
+                    gameFreeAmount[x] = Math.round((gameFreeAmount[x] / calcTotal) * 100);
+                }
+
+                for (let x = 0; x < 1; x++) {
+                    gameDetails = await steam.getGameDetails(featuredGames.featured_win[1].id, [false]);
+                    let g = -1
+                    let c = -1;
+                    let f = -1;
+                    for (let y = 0; y < gameGenres.length; y++) {
+                        if (gameGenres[y] == gameDetails.genres[0].description) {
+                            g = y;
+                            //console.log("g = " + g)
+                        }
+                    }
+                    for (let y = 0; y < gameCategories.length; y++) {
+                        if (gameCategories[y] == gameDetails.categories[0].description) {
+                            c = y;
+                            //console.log("c = " + c)
+                        }
+                    }
+                    for (let y = 0; y < gameFree.length; y++) {
+                        if (gameFree[y] == gameDetails.is_free) {
+                            f = y;
+                            //console.log("f = " + f)
+                        }
+                    }
+                    if (g >= 0 || c >= 0 || f >= 0) {
+                        if (g < 0) {
+                            gameGenresAmount.push(0);
+                            g = gameGenresAmount.length-1;
+                        }
+                        if (c < 0) {
+                            gameCategoriesAmount.push(0);
+                            c = gameCategoriesAmount.length-1;
+                        }
+                        if (f < 0) {
+                            gameFreeAmount.push(0);
+                            f = gameFreeAmount.length-1;
+                        }
+                        if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) == 300) {
+                            RecommendationScore = 100;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 270 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 300) {
+                            RecommendationScore = 95;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 240 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 270) {
+                            RecommendationScore = 90;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 210 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 240) {
+                            RecommendationScore = 80;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 180 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 210) {
+                            RecommendationScore = 70;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 150 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 180) {
+                            RecommendationScore = 60;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 120 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 150) {
+                            RecommendationScore = 50;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 90 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 120) {
+                            RecommendationScore = 40;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 60 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 90) {
+                            RecommendationScore = 30;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 45 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 60) {
+                            RecommendationScore = 20;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 30 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 45) {
+                            RecommendationScore = 10;
+                        } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 30) {
+                            RecommendationScore = "0";
+                        }
+                    } else {
+                        RecommendationScore = "0"
                     }
                 }
 
@@ -338,10 +466,16 @@ app.use(async ctx => {
             //console.log("Height:" +  window.screen.height)
             //console.log("Width:" +  window.screen.width)
             //console.log(`The current screen width is ${screen.width}`);
-            //console.log("Total Game Time: " + gameTimeTotal);
-            //console.log("Recent Game Time: " + gameTimeNew);
-            //console.log("genres array: " + gameGenres)
-            
+            console.log("Total Game Time: " + gameTimeTotal);
+            console.log("Recent Game Time: " + gameTimeNew);
+            console.log("genres array: " + gameGenres)
+            console.log("Genres list: " + gameGenresAmount)
+            console.log("categories array: " + gameCategories)
+            console.log("Categories list: " + gameCategoriesAmount)
+            console.log("free array: " + gameFree)
+            console.log("Free list: " + gameFreeAmount)
+            console.log("Recommendation Score: " + RecommendationScore)
+            //console.log("gamesWithoutApps: " + gamesWithoutApps[1])
 
             let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
             const template = Handlebars.compile(file);
