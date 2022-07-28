@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const app = new Koa();
 const SteamAPI = require('steamapi');
-const steam = new SteamAPI('CEFCED59261F8C680BB9C97B28422B38');
+const steam = new SteamAPI('BD652A6F2C1C1405DACD753C225FDB75');
 const Handlebars = require("handlebars");
 var moment = require('moment');
 const e = require('express');
@@ -34,7 +34,8 @@ app.use(async ctx => {
         const gameFreeAmount = [];
         const gameCategories = [];
         const gameCategoriesAmount = [];
-        let RecommendationScore = 0;
+        const RecommendationScore = [];
+        const RecommendedGames = [];
         let calcTotal = 0;
         let gameTimeTotal = 0;
         let gameTimeNew = 0;
@@ -321,8 +322,9 @@ app.use(async ctx => {
                     gameFreeAmount[x] = Math.round((gameFreeAmount[x] / calcTotal) * 100);
                 }
 
-                for (let x = 0; x < 1; x++) {
-                    gameDetails = await steam.getGameDetails(featuredGames.featured_win[1].id, [false]);
+                for (let x = 0; x < featuredGames.featured_win.length; x++) {
+                    gameDetails = await steam.getGameDetails(featuredGames.featured_win[x].id, [false]);
+                    RecommendedGames.push(gameDetails)
                     let g = -1
                     let c = -1;
                     let f = -1;
@@ -358,33 +360,47 @@ app.use(async ctx => {
                             f = gameFreeAmount.length-1;
                         }
                         if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) == 300) {
-                            RecommendationScore = 100;
+                            RecommendationScore.push(100);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 270 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 300) {
-                            RecommendationScore = 95;
+                            RecommendationScore.push(95);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 240 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 270) {
-                            RecommendationScore = 90;
+                            RecommendationScore.push(90);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 210 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 240) {
-                            RecommendationScore = 80;
+                            RecommendationScore.push(80);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 180 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 210) {
-                            RecommendationScore = 70;
+                            RecommendationScore.push(70);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 150 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 180) {
-                            RecommendationScore = 60;
+                            RecommendationScore.push(60);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 120 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 150) {
-                            RecommendationScore = 50;
+                            RecommendationScore.push(50);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 90 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 120) {
-                            RecommendationScore = 40;
+                            RecommendationScore.push(40);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 60 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 90) {
-                            RecommendationScore = 30;
+                            RecommendationScore.push(30);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 45 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 60) {
-                            RecommendationScore = 20;
+                            RecommendationScore.push(20);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) >= 30 && (gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 45) {
-                            RecommendationScore = 10;
+                            RecommendationScore.push(10);
                         } else if ((gameGenresAmount[g] + gameCategoriesAmount[c] + gameFreeAmount[f]) < 30) {
-                            RecommendationScore = "0";
+                            RecommendationScore.push(0);
                         }
                     } else {
-                        RecommendationScore = "0"
+                        RecommendationScore.push(0);
                     }
+                }
+
+                for (let x = 0; x < featuredGames.featured_win.length; x++) {
+                    featuredGames.featured_win[x].original_price = featuredGames.featured_win[x].original_price / 100;
+                    RecommendedGames[x].required_age = RecommendationScore[x];
+                    featuredGames.featured_win[x].type = RecommendationScore[x];
+                }
+
+                RecommendedGames.sort(function(b, a){return (a.required_age) - (b.required_age)});
+                featuredGames.featured_win.sort(function(b, a){return (a.type) - (b.type)});
+                RecommendationScore.sort(function(b, a){return (a) - (b)});
+
+                for (let x = 0; x < RecommendedGames.length; x++) {
+                    console.log(RecommendedGames[x].required_age    )
                 }
 
                 if ((gamesWithoutApps.length == 0 && games.length >= 0) || games.length == 0) {
@@ -466,16 +482,18 @@ app.use(async ctx => {
             //console.log("Height:" +  window.screen.height)
             //console.log("Width:" +  window.screen.width)
             //console.log(`The current screen width is ${screen.width}`);
-            console.log("Total Game Time: " + gameTimeTotal);
-            console.log("Recent Game Time: " + gameTimeNew);
-            console.log("genres array: " + gameGenres)
-            console.log("Genres list: " + gameGenresAmount)
-            console.log("categories array: " + gameCategories)
-            console.log("Categories list: " + gameCategoriesAmount)
-            console.log("free array: " + gameFree)
-            console.log("Free list: " + gameFreeAmount)
-            console.log("Recommendation Score: " + RecommendationScore)
+            //console.log("Total Game Time: " + gameTimeTotal);
+            //console.log("Recent Game Time: " + gameTimeNew);
+            //console.log("genres array: " + gameGenres)
+            //console.log("Genres list: " + gameGenresAmount)
+            //console.log("categories array: " + gameCategories)
+            //console.log("Categories list: " + gameCategoriesAmount)
+            //console.log("free array: " + gameFree)
+            //console.log("Free list: " + gameFreeAmount)
+            //console.log("Recommendation Score: " + RecommendationScore)
             //console.log("gamesWithoutApps: " + gamesWithoutApps[1])
+            //console.log(RecommendedGames)
+            //console.log(featuredGames.featured_win)
 
             let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
             const template = Handlebars.compile(file);
@@ -507,7 +525,10 @@ app.use(async ctx => {
                 gameLength8: gameLength8,
                 gameLength9: gameLength9,
                 gameLengthFull: gameLengthFull,
-                NoGamesOwned: NoGamesOwned
+                NoGamesOwned: NoGamesOwned,
+                featuredGames: featuredGames,
+                RecommendationScore: RecommendationScore,
+                RecommendedGames: RecommendedGames
             }));
 
         } else {
