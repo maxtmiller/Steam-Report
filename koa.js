@@ -243,6 +243,10 @@ app.use(async ctx => {
                         if (gameDetails.name == "Bloons TD Battles 2") {
                             gameDetails.background_raw = gameDetails.screenshots[0].path_full
                         }
+                        if (gameDetails.name == "LEGO® Star Wars™: The Skywalker Saga") {
+                            gameDetails.background_raw = gameDetails.screenshots[0].path_full
+                        }
+                        
                         if (gameDetails.type == 'game' && gameDetails.background_raw != "" && !gamesWithoutApps.some(game => game.name == gameDetails.name)) {
                             try {
                                 await axios.get(gameDetails.background_raw)
@@ -400,7 +404,7 @@ app.use(async ctx => {
                 RecommendationScore.sort(function(b, a){return (a) - (b)});
 
                 for (let x = 0; x < RecommendedGames.length; x++) {
-                    console.log(RecommendedGames[x].required_age    )
+                    //console.log(RecommendedGames[x].required_age    )
                 }
 
                 if ((gamesWithoutApps.length == 0 && games.length >= 0) || games.length == 0) {
