@@ -653,7 +653,7 @@
                             <div id = "rectangle-12">
                                 {{#if gameLength0}}
                                     <div class="centeredNoGame">
-                                        <p>No Games to Display</p>
+                                        <p>Not enough information to Recommend</p>
                                     </div>
                                 {{else}}
                                     <p class="gameRecName"> <span class="bolded">{{RecommendedGames.[0].name}}</span></p>
@@ -668,9 +668,9 @@
                                 {{/if}}
                             </div>
                             <div id = "rectangle-12">
-                                {{#if gameLength1}}
+                                {{#if gameLength0}}
                                     <div class="centeredNoGame">
-                                        <p>No Games to Display</p>
+                                        <p>Not enough information to Recommend</p>
                                     </div>
                                 {{else}}
                                     <p class="gameRecName"> <span class="bolded">{{RecommendedGames.[1].name}}</span></p>
@@ -685,9 +685,9 @@
                                 {{/if}}
                             </div>
                             <div id = "rectangle-12">
-                                {{#if gameLength1}}
+                                {{#if gameLength0}}
                                     <div class="centeredNoGame">
-                                        <p>No Games to Display</p>
+                                        <p>Not enough information to Recommend</p>
                                     </div>
                                 {{else}}
                                     <p class="gameRecName"> <span class="bolded">{{RecommendedGames.[2].name}}</span></p>
@@ -704,39 +704,75 @@
                         </div>
                         <div class="plots">
                             <div id = "rectangle-13">
-                                <h3 class="gameRecDescTitle">Game Description:</h3>
-                                <p class="gameRecDesc">{{RecommendedGames.[0].short_description}}</p>
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>N/A</p>
+                                    </div>
+                                {{else}}
+                                    <h3 class="gameRecDescTitle">Game Description:</h3>
+                                    <p class="gameRecDesc">{{RecommendedGames.[0].short_description}}</p>
+                                {{/if}}
                             </div>
                             <div id = "rectangle-13">
-                                <h3 class="gameRecDescTitle">Game Description:</h3>
-                                <p class="gameRecDesc">{{RecommendedGames.[1].short_description}}</p>
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>N/A</p>
+                                    </div>
+                                {{else}}
+                                    <h3 class="gameRecDescTitle">Game Description:</h3>
+                                    <p class="gameRecDesc">{{RecommendedGames.[1].short_description}}</p>
+                                {{/if}}
                             </div>
                             <div id = "rectangle-13">
-                                <h3 class="gameRecDescTitle">Game Description:</h3>
-                                <p class="gameRecDesc">{{RecommendedGames.[2].short_description}}</p>
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>N/A</p>
+                                    </div>
+                                {{else}}
+                                    <h3 class="gameRecDescTitle">Game Description:</h3>
+                                    <p class="gameRecDesc">{{RecommendedGames.[2].short_description}}</p>
+                                {{/if}}
                             </div>
                         </div>
                         <div class="plots">
                             <div id = "rectangle-14">
-                                <div class="plots-2">
-                                    <p class="gameRecScore-2">Match: </p>
-                                    <p class="usernamePlaceholder">.</p>
-                                    <p class="gameRecScore-1">{{RecommendationScore.[0]}}%</p>
-                                </div>
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>N/A</p>
+                                    </div>
+                                {{else}}
+                                    <div class="plots-2">
+                                        <p class="gameRecScore-2">Match: </p>
+                                        <p class="usernamePlaceholder">.</p>
+                                        <p class="gameRecScore-1">{{RecommendationScore.[0]}}%</p>
+                                    </div>
+                                {{/if}}
                             </div>
                             <div id = "rectangle-14">
-                                <div class="plots-2">
-                                    <p class="gameRecScore-2">Match: </p>
-                                    <p class="usernamePlaceholder">.</p>
-                                    <p class="gameRecScore-1">{{RecommendationScore.[1]}}%</p>
-                                </div>
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>N/A</p>
+                                    </div>
+                                {{else}}
+                                    <div class="plots-2">
+                                        <p class="gameRecScore-2">Match: </p>
+                                        <p class="usernamePlaceholder">.</p>
+                                        <p class="gameRecScore-1">{{RecommendationScore.[1]}}%</p>
+                                    </div>
+                                {{/if}}
                             </div>
                             <div id = "rectangle-14">
-                                <div class="plots-2">
-                                    <p class="gameRecScore-2">Match: </p>
-                                    <p class="usernamePlaceholder">.</p>
-                                    <p class="gameRecScore-1">{{RecommendationScore.[2]}}%</p>
-                                </div>
+                                {{#if gameLength0}}
+                                    <div class="centeredNoGame">
+                                        <p>N/A</p>
+                                    </div>
+                                {{else}}
+                                    <div class="plots-2">
+                                        <p class="gameRecScore-2">Match: </p>
+                                        <p class="usernamePlaceholder">.</p>
+                                        <p class="gameRecScore-1">{{RecommendationScore.[2]}}%</p>
+                                    </div>
+                                {{/if}}
                             </div>
                         </div>
                     </div>
