@@ -1,30 +1,115 @@
-const Koa = require('koa');
+import Koa from 'koa';
 const app = new Koa();
-const SteamAPI = require('steamapi');
-const steam = new SteamAPI('XXXX');
-const Handlebars = require("handlebars");
-var moment = require('moment');
-const e = require('express');
-moment().format();
-const { isContext } = require('vm');
-const axios = require('axios');
-const { url } = require('inspector');
-//const ScreenSizeDetector = require('screen-size-detector');
-//const screen = new ScreenSizeDetector();
 
-const fs = require('fs').promises;
+import SteamAPI from 'steamapi';
+const steam = new SteamAPI('XXX');
+
+import Handlebars from 'handlebars';
+import moment from 'moment';
+import axios from 'axios';
+import fs from 'fs/promises';
+import path from 'path';
+
+import NodeCache from 'node-cache';
+const cache = new NodeCache({ stdTTL: 60 * 5 });
+
+function mapUserLevel(level, id) {
+    let levelDetails = { level0: false, level10: false, level20: false, levelT: false, levelG: false };
+    if (level < 10) {
+        levelDetails.level0 = true;
+    } else if (level >= 10 && level < 20) {
+        levelDetails.level10 = true;
+    } else if (level >= 20 && level < 30) {
+        levelDetails.level20 = true;
+    } else if (level >= 30) {
+        levelDetails.levelT = true;
+    }
+    // Example for admin logic
+    if (id === "76561199103486871" || id === "76561198426601542") {
+        levelDetails.levelG = true;
+    }
+    return levelDetails;
+}
+
+function mapPersonaState(state) {
+    switch (state) {
+        case 0: return "Private";
+        case 1: return "Online";
+        case 2: return "Busy";
+        case 3: return "Away";
+        case 4: return "Snooze";
+        case 5: return "Looking to Trade";
+        default: return "Looking to Play";
+    }
+}
+
+function roundT(num) {
+    var m = Number((Math.abs(num) * 10).toPrecision(15));
+    return Math.round(m) / 10 * Math.sign(num);
+}
+
+function contains(arr, val) {
+    return arr.some(function(arrVal) {
+    return val === arrVal;
+    });
+}
+
+function banned(bans) {
+    return (bans.communityBanned == true || bans.vacBanned == true || bans.vacBans > 0 || bans.gameBans > 0 || bans.economyBan == "banned");
+}
+
+function gamesOwned(NoGamesOwned, games) {
+    try {
+        if (games.length > 0) {
+            NoGamesOwned = false;
+        } else if (games.length <= 0) {
+            NoGamesOwned = true;
+        }
+    } catch (error) {
+        NoGamesOwned = true;
+    }
+}
 
 app.use(async ctx => {
+
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
     if (ctx.request.query.login) {
         let id = await steam.resolve(ctx.request.query.login);
+
+        const cachedUserData = cache.get(id);
+        if (cachedUserData) {
+            console.log('Cache hit');
+            let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
+            const template = Handlebars.compile(file);
+            ctx.body = (template(cachedUserData));
+            return;
+        }
+
         let bans = await steam.getUserBans(id);
         let player = await steam.getGamePlayers('730');
         let summary = await steam.getUserSummary(id);
         let featuredGames = await steam.getFeaturedGames();
-        let creationDate = moment.unix(summary.created).format("MMM Do YYYY");
-        let lastOnline = moment.unix(summary.lastLogOff).format("MMM Do YYYY");
+        let level = await steam.getUserLevel(id);
+        let creationDate = moment.unix(summary.createdTimestamp).format("MMM Do YYYY");
+        let lastOnline = moment.unix(summary.lastLogOffTimestamp).format("MMM Do YYYY");
         let daysSinceBan = bans.daysSinceLastBan;
+        let isBanned = banned(bans);
         let url = ctx.request.query.login;
+        let games = await steam.getUserOwnedGames(id);
+
+        let admin = false;
+        if (id == "76561199103486871" || id == "76561198426601542") admin = true;
+        let levelDetails;
+        mapUserLevel(level,id);
+        
+        let privateProfile = false;
+        let personaState = mapPersonaState(summary.personaState);
+        if (personaState=="Private") privateProfile = true;
+
+        let NoGamesOwned = false;
+        gamesOwned(NoGamesOwned, games);
+
         const gameIDList = [];
         let gameDetails;
         const gamesWithoutApps = [];
@@ -39,7 +124,6 @@ app.use(async ctx => {
         let calcTotal = 0;
         let gameTimeTotal = 0;
         let gameTimeNew = 0;
-        let level = await steam.getUserLevel(id);
         let level0 = false;
         let level10 = false;
         let level20 = false;
@@ -47,13 +131,8 @@ app.use(async ctx => {
         let levelG = false;
         let friends;
         let friendsPrivate = false;
-        let games;
         let gamesPrivate = false;
-        let isBanned = false;
-        let personaState;
-        let admin = false;
         let online = false;
-        let NoGamesOwned = false;
         let gameLength0 = false;
         let gameLength1 = false;
         let gameLength2 = false;
@@ -65,79 +144,10 @@ app.use(async ctx => {
         let gameLength8 = false;
         let gameLength9 = false;
         let gameLengthFull = false;
-        let privateProfile = false;
 
-        function roundT(num) {
-            var m = Number((Math.abs(num) * 10).toPrecision(15));
-            return Math.round(m) / 10 * Math.sign(num);
-        }
+        console.log(summary);
 
-        function contains(arr, val) {
-            return arr.some(function(arrVal) {
-              return val === arrVal;
-            });
-        }
-
-        if (id == "76561199103486871" || id == "76561198426601542") {
-            admin = true;
-        }
-
-        if (summary.personaState == 0) {
-            if (summary.visibilityState != 3) {
-                personaState = "Private";
-            } else {
-                personaState = "Offline";
-            }
-        } else if (summary.personaState == 1) {
-            personaState = "Online";
-            online = true;
-        } else if (summary.personaState == 2) {
-            personaState = "Busy";
-        } else if (summary.personaState == 3) {
-            personaState = "Away";
-        } else if (summary.personaState == 4) {
-            personaState = "Snooze";
-        } else if (summary.personaState == 5) {
-            personaState = "Looking to Trade";
-        } else {
-            personaState = "Looking to Play";
-        }
-
-        if (admin == true) {
-            levelG = true;
-        } else {
-            if (level < 10) {
-                level0 = true;
-            } else if (level >= 10 && level < 20) {
-                level10 = true;
-            } else if (level >= 20 && level < 30) {
-                level20 = true;
-            } else if (level >= 30) {
-                levelT = true;
-            }
-        }
-
-        try {
-            games = await steam.getUserOwnedGames(id);
-
-            if (games.length > 0) {
-                NoGamesOwned = false;
-            } else if (games.length <= 0) {
-                NoGamesOwned = true;
-            }
-        } catch (error) {
-            //console.log(error);
-            NoGamesOwned = true;
-        }
-
-        if (summary.visibilityState != 3) {
-            privateProfile = true;
-        } else {
-            privateProfile = false;
-        }
-        
-
-        if (summary.visibilityState == 3 && bans.communityBanned == false && NoGamesOwned == false) {
+        if (summary.visible == true && bans.communityBanned == false && NoGamesOwned == false) {
             if (bans.communityBanned == true || bans.vacBanned == true || bans.vacBans > 0 || bans.gameBans > 0 || bans.economyBan == "banned") {
                 isBanned = true;
                 let file = await fs.readFile(__dirname + "/banned.html", "UTF-8");
@@ -155,29 +165,29 @@ app.use(async ctx => {
                 games = await steam.getUserOwnedGames(id);
 
                 for (let x = 0; x < games.length; x++) {
-                    if (games[x].playTime > 0) {
+                    if (games[x].minutes > 0) {
                         try {
 
-                            gameTimeTotal = gameTimeTotal + games[x].playTime;
+                            gameTimeTotal = gameTimeTotal + games[x].minutes;
 
-                            if (games[x].playTime < 10*60) {
-                                games[x].playTime = roundT(games[x].playTime/60);
+                            if (games[x].minutes < 10*60) {
+                                games[x].minutes = roundT(games[x].minutes/60);
                             } else {
-                                games[x].playTime = Math.round(games[x].playTime/60);
+                                games[x].minutes = Math.round(games[x].minutes/60);
                             }
                         } catch(error) {
                             console.log(error);
                         }
                     }
-                    if (games[x].playTime2 > 0) {
+                    if (games[x].recentMinutes > 0) {
                         try {
 
-                            gameTimeNew = gameTimeNew + games[x].playTime2;
+                            gameTimeNew = gameTimeNew + games[x].recentMinutes;
 
-                            if (games[x].playTime2 < 10*60) {
-                                games[x].playTime2 = roundT(games[x].playTime2/60);
+                            if (games[x].recentMinutes < 10*60) {
+                                games[x].recentMinutes = roundT(games[x].recentMinutes/60);
                             } else {
-                                games[x].playTime2 = Math.round(games[x].playTime2/60);
+                                games[x].recentMinutes = Math.round(games[x].recentMinutes/60);
                             }
                         } catch(error) {
                             console.log(error);
@@ -185,14 +195,14 @@ app.use(async ctx => {
                     }
                 }
 
-                games.sort(function(b, a){return (a.playTime) - (b.playTime)});
-                games.sort(function(b, a){return (a.playTime2) - (b.playTime2)});
+                games.sort(function(b, a){return (a.minutes) - (b.minutes)});
+                games.sort(function(b, a){return (a.recentMinutes) - (b.recentMinutes)});
 
                 gameTimeTotal = roundT(gameTimeTotal/60);
                 gameTimeNew = roundT(gameTimeNew/60);
 
                 for (let x = 0; x < games.length; x++) {
-                    gameIDList.push(games[x].appID.toString());
+                    gameIDList.push(games[x].game.id.toString());
                 }
 
                 for (let x = 0; x < 11; x++) {
@@ -257,21 +267,19 @@ app.use(async ctx => {
                         }
 
                         if (contains(gameGenres, gameDetails.genres[0].description) == false) {
-                            //console.log(gameGenres);
                             gameGenres.push(gameDetails.genres[0].description);
                         } else if (gameDetails.genres[0].description == gameGenres[0]) {
                             gameGenresAmount[0]
                         }
 
                         if (contains(gameCategories, gameDetails.categories[0].description) == false) {
-                            //console.log(gameCategories);
                             gameCategories.push(gameDetails.categories[0].description);
                         } else if (gameDetails.categories[0].description == gameCategories[0]) {
                             gameCategoriesAmount[0]
                         }
                         
                     } catch (error) {
-                        //console.log(error);
+                        console.log(error);
                     }
                 }
 
@@ -281,10 +289,10 @@ app.use(async ctx => {
                 }
                 for (let x = 0; x < gamesWithoutApps.length; x++) {
                     gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
+                    // console.log(gameDetails);
                     for (let y = 0; y < gameGenres.length; y++) {
                         if (gameGenres[y] == gameDetails.genres[0].description) {
                             gameGenresAmount[y] = gameGenresAmount[y] + 1;
-                            //console.log(gameDetails.genres[0].description)
                         }
                     }
                     calcTotal = calcTotal + 1;
@@ -302,7 +310,6 @@ app.use(async ctx => {
                     for (let y = 0; y < gameCategories.length; y++) {
                         if (gameCategories[y] == gameDetails.categories[0].description) {
                             gameCategoriesAmount[y] = gameCategoriesAmount[y] + 1;
-                            //console.log(gameDetails.categories[0].description)
                         }
                     }
                 }
@@ -318,7 +325,6 @@ app.use(async ctx => {
                     for (let y = 0; y < gameFree.length; y++) {
                         if (gameFree[y] == gameDetails.is_free) {
                             gameFreeAmount[y] = gameFreeAmount[y] + 1;
-                            //console.log(gameDetails.is_free)
                         }
                     }
                 }
@@ -335,19 +341,16 @@ app.use(async ctx => {
                     for (let y = 0; y < gameGenres.length; y++) {
                         if (gameGenres[y] == gameDetails.genres[0].description) {
                             g = y;
-                            //console.log("g = " + g)
                         }
                     }
                     for (let y = 0; y < gameCategories.length; y++) {
                         if (gameCategories[y] == gameDetails.categories[0].description) {
                             c = y;
-                            //console.log("c = " + c)
                         }
                     }
                     for (let y = 0; y < gameFree.length; y++) {
                         if (gameFree[y] == gameDetails.is_free) {
                             f = y;
-                            //console.log("f = " + f)
                         }
                     }
                     if (g >= 0 || c >= 0 || f >= 0) {
@@ -402,10 +405,6 @@ app.use(async ctx => {
                 RecommendedGames.sort(function(b, a){return (a.required_age) - (b.required_age)});
                 featuredGames.featured_win.sort(function(b, a){return (a.type) - (b.type)});
                 RecommendationScore.sort(function(b, a){return (a) - (b)});
-
-                for (let x = 0; x < RecommendedGames.length; x++) {
-                    //console.log(RecommendedGames[x].required_age    )
-                }
 
                 if ((gamesWithoutApps.length == 0 && games.length >= 0) || games.length == 0) {
                     gameLength0 = true;
@@ -478,30 +477,48 @@ app.use(async ctx => {
 
             } catch (error) {
                 gamesPrivate = true
-                //console.log(error);
             }
 
-            //console.log(url);
-            //console.log('http://steamreport.info/?login=%27+'+url);
-            //console.log("Height:" +  window.screen.height)
-            //console.log("Width:" +  window.screen.width)
-            //console.log(`The current screen width is ${screen.width}`);
-            //console.log("Total Game Time: " + gameTimeTotal);
-            //console.log("Recent Game Time: " + gameTimeNew);
-            //console.log("genres array: " + gameGenres)
-            //console.log("Genres list: " + gameGenresAmount)
-            //console.log("categories array: " + gameCategories)
-            //console.log("Categories list: " + gameCategoriesAmount)
-            //console.log("free array: " + gameFree)
-            //console.log("Free list: " + gameFreeAmount)
-            //console.log("Recommendation Score: " + RecommendationScore)
-            //console.log("gamesWithoutApps: " + gamesWithoutApps[1])
-            //console.log(RecommendedGames)
-            //console.log(featuredGames.featured_win)
+            let userData = {
+                id,
+                player,
+                summary,
+                friends,
+                games,
+                friendsPrivate,
+                gamesPrivate,
+                isBanned,
+                creationDate,
+                personaState,
+                level: level, level0, level10, level20, levelT, levelG,
+                admin,
+                online,
+                lastOnline,
+                daysSinceBan,
+                games,
+                gameIDList,
+                gamesWithoutApps,
+                gameLength1, 
+                gameLength2,
+                gameLength3,
+                gameLength4,
+                gameLength5,
+                gameLength6,
+                gameLength7,
+                gameLength8,
+                gameLength9,
+                gameLengthFull,
+                NoGamesOwned,
+                featuredGames,
+                RecommendationScore,
+                RecommendedGames
+            };
+            cache.set(id, userData);
 
             let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
             const template = Handlebars.compile(file);
-            ctx.body = (template({ id: id,
+            ctx.body = (template({ 
+                id: id,
                 player: player,
                 summary: summary,
                 friends: friends,
@@ -538,7 +555,7 @@ app.use(async ctx => {
         } else {
             let file = await fs.readFile(__dirname + "/private-profile.html", "UTF-8");
             const template = Handlebars.compile(file);
-            ctx.body = (template({ bans: bans, NoGamesOwned: NoGamesOwned, privateProfile: privateProfile, admin: admin }));
+            ctx.body = (template(userData, { bans: bans, NoGamesOwned: NoGamesOwned, privateProfile: privateProfile, admin: admin }));
         }
     } else {
         let file = await fs.readFile(__dirname + "/profile-set.html", "UTF-8");
@@ -547,7 +564,7 @@ app.use(async ctx => {
     }
 });
 
-//Code on lines 344, 345 used when running server locally
+// Code on lines 344, 345 used when running server locally
 console.log('Server is running on port 3000')
 app.listen(3000);
 
