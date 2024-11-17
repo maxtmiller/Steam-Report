@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "axios": "^1.7.7",
+    "esm": "^3.2.25",
+    "express": "^4.21.1",
+    "handlebars": "^4.7.8",
+    "koa": "^2.15.3",
+    "moment": "^2.30.1",
+    "node-cache": "^5.1.2",
+    "path": "^0.12.7",
+    "steamapi": "^3.0.12",
+    "vm": "^0.1.0"
+  },
+  "type": "module"
+}
