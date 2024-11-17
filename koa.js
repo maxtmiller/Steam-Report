@@ -133,16 +133,18 @@ app.use(async ctx => {
         let friendsPrivate = false;
         let gamesPrivate = false;
         let online = false;
-        let gameLength0 = false;
-        let gameLength1 = false;
-        let gameLength2 = false;
-        let gameLength3 = false;
-        let gameLength4 = false;
-        let gameLength5 = false;
-        let gameLength6 = false;
-        let gameLength7 = false;
-        let gameLength8 = false;
-        let gameLength9 = false;
+        let gameLengthVars = {
+            gameLength0: false,
+            gameLength1: false,
+            gameLength2: false,
+            gameLength3: false,
+            gameLength4: false,
+            gameLength5: false,
+            gameLength6: false,
+            gameLength7: false,
+            gameLength8: false,
+            gameLength9: false,
+        };
         let gameLengthFull = false;
 
         console.log(summary);
@@ -289,7 +291,6 @@ app.use(async ctx => {
                 }
                 for (let x = 0; x < gamesWithoutApps.length; x++) {
                     gameDetails = await steam.getGameDetails(gameIDList[x], [false]);
-                    // console.log(gameDetails);
                     for (let y = 0; y < gameGenres.length; y++) {
                         if (gameGenres[y] == gameDetails.genres[0].description) {
                             gameGenresAmount[y] = gameGenresAmount[y] + 1;
@@ -406,72 +407,12 @@ app.use(async ctx => {
                 featuredGames.featured_win.sort(function(b, a){return (a.type) - (b.type)});
                 RecommendationScore.sort(function(b, a){return (a) - (b)});
 
-                if ((gamesWithoutApps.length == 0 && games.length >= 0) || games.length == 0) {
-                    gameLength0 = true;
-                    gameLength1 = true;
-                    gameLength2 = true;
-                    gameLength3 = true;
-                    gameLength4 = true;
-                    gameLength5 = true;
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 1) {
-                    gameLength1 = true;
-                    gameLength2 = true;
-                    gameLength3 = true;
-                    gameLength4 = true;
-                    gameLength5 = true;
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 2) {
-                    gameLength2 = true;
-                    gameLength3 = true;
-                    gameLength4 = true;
-                    gameLength5 = true;
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 3) {
-                    gameLength3 = true;
-                    gameLength4 = true;
-                    gameLength5 = true;
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 4) {
-                    gameLength4 = true;
-                    gameLength5 = true;
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 5) {
-                    gameLength5 = true;
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 6) {
-                    gameLength6 = true;
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 7) {
-                    gameLength7 = true;
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 8) {
-                    gameLength8 = true;
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 9 ) {
-                    gameLength9 = true;
-                } else if (gamesWithoutApps.length == 10) {
+                if (gamesWithoutApps.length <= 10) {
+                    for (let i = gamesWithoutApps.length; i < 10; i++) {
+                        gameLengthVars[`gameLength${i}`] = true;
+                    }
+                }
+                if (gamesWithoutApps.length === 10) {
                     gameLengthFull = true;
                 }
 
@@ -480,6 +421,7 @@ app.use(async ctx => {
             }
 
             let userData = {
+                gameLengthVars,
                 id,
                 player,
                 summary,
@@ -498,15 +440,6 @@ app.use(async ctx => {
                 games,
                 gameIDList,
                 gamesWithoutApps,
-                gameLength1, 
-                gameLength2,
-                gameLength3,
-                gameLength4,
-                gameLength5,
-                gameLength6,
-                gameLength7,
-                gameLength8,
-                gameLength9,
                 gameLengthFull,
                 NoGamesOwned,
                 featuredGames,
@@ -517,7 +450,7 @@ app.use(async ctx => {
 
             let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
             const template = Handlebars.compile(file);
-            ctx.body = (template({ 
+            ctx.body = (template({
                 id: id,
                 player: player,
                 summary: summary,
@@ -536,15 +469,7 @@ app.use(async ctx => {
                 games: games,
                 gameIDList: gameIDList,
                 gamesWithoutApps: gamesWithoutApps,
-                gameLength1: gameLength1, 
-                gameLength2: gameLength2,
-                gameLength3: gameLength3,
-                gameLength4: gameLength4,
-                gameLength5: gameLength5,
-                gameLength6: gameLength6,
-                gameLength7: gameLength7,
-                gameLength8: gameLength8,
-                gameLength9: gameLength9,
+                ...gameLengthVars,
                 gameLengthFull: gameLengthFull,
                 NoGamesOwned: NoGamesOwned,
                 featuredGames: featuredGames,
