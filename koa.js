@@ -1,8 +1,11 @@
 import Koa from 'koa';
 const app = new Koa();
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 import SteamAPI from 'steamapi';
-const steam = new SteamAPI('XXX');
+const steam = new SteamAPI(process.env.API_KEY);
 
 import Handlebars from 'handlebars';
 import moment from 'moment';
@@ -12,6 +15,12 @@ import path from 'path';
 
 import NodeCache from 'node-cache';
 const cache = new NodeCache({ stdTTL: 60 * 5 });
+
+function isValidSteamURL(url) {
+    const profileRegex = /^https:\/\/steamcommunity\.com\/profiles\/.+$/;
+    const idRegex = /^https:\/\/steamcommunity\.com\/id\/.+$/;
+    return profileRegex.test(url) || idRegex.test(url);
+}
 
 function mapUserLevel(level, id) {
     let levelDetails = { level0: false, level10: false, level20: false, levelT: false, levelG: false };
@@ -75,12 +84,19 @@ app.use(async ctx => {
     const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
     if (ctx.request.query.login) {
-        let id = await steam.resolve(ctx.request.query.login);
+
+        let url = ctx.request.query.login;
+
+        if (!isValidSteamURL(url)) {
+            let file = await fs.readFile(__dirname + "/templates/profile-set.html", "UTF-8");
+            return;
+        }
+        let id = await steam.resolve(url);
 
         const cachedUserData = cache.get(id);
         if (cachedUserData) {
             console.log('Cache hit');
-            let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
+            let file = await fs.readFile(__dirname + "/templates/webpage-input.html", "UTF-8");
             const template = Handlebars.compile(file);
             ctx.body = (template(cachedUserData));
             return;
@@ -95,7 +111,6 @@ app.use(async ctx => {
         let lastOnline = moment.unix(summary.lastLogOffTimestamp).format("MMM Do YYYY");
         let daysSinceBan = bans.daysSinceLastBan;
         let isBanned = banned(bans);
-        let url = ctx.request.query.login;
         let games = await steam.getUserOwnedGames(id);
 
         let admin = false;
@@ -152,7 +167,7 @@ app.use(async ctx => {
         if (summary.visible == true && bans.communityBanned == false && NoGamesOwned == false) {
             if (bans.communityBanned == true || bans.vacBanned == true || bans.vacBans > 0 || bans.gameBans > 0 || bans.economyBan == "banned") {
                 isBanned = true;
-                let file = await fs.readFile(__dirname + "/banned.html", "UTF-8");
+                let file = await fs.readFile(__dirname + "/templates/banned.html", "UTF-8");
                 const template = Handlebars.compile(file);
                 ctx.body = (template({ ban: bans, url: url }));
             }
@@ -448,7 +463,7 @@ app.use(async ctx => {
             };
             cache.set(id, userData);
 
-            let file = await fs.readFile(__dirname + "/webpage-input.html", "UTF-8");
+            let file = await fs.readFile(__dirname + "/templates/webpage-input.html", "UTF-8");
             const template = Handlebars.compile(file);
             ctx.body = (template({
                 id: id,
@@ -478,12 +493,12 @@ app.use(async ctx => {
             }));
 
         } else {
-            let file = await fs.readFile(__dirname + "/private-profile.html", "UTF-8");
+            let file = await fs.readFile(__dirname + "/templates/private-profile.html", "UTF-8");
             const template = Handlebars.compile(file);
             ctx.body = (template(userData, { bans: bans, NoGamesOwned: NoGamesOwned, privateProfile: privateProfile, admin: admin }));
         }
     } else {
-        let file = await fs.readFile(__dirname + "/profile-set.html", "UTF-8");
+        let file = await fs.readFile(__dirname + "/templates/profile-set.html", "UTF-8");
         const template = Handlebars.compile(file);
         ctx.body = (template({ }));
     }

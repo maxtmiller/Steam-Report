@@ -154,10 +154,20 @@
     </button>
 
     <script>
+
+        function isValidSteamURL(url) {
+            const profileRegex = /^https:\/\/steamcommunity\.com\/profiles\/.+$/;
+            const idRegex = /^https:\/\/steamcommunity\.com\/id\/.+$/;
+            return profileRegex.test(url) || idRegex.test(url);
+        }
+
         function myFunction() {
           let URL = prompt("Please enter a Steam URL", "https://steamcommunity.com/profiles/76561199103486871/");
-          if (URL != null) {
+          if (URL != null && isValidSteamURL(URL)) {
             window.location.search = "?login=" + URL
+          } else {
+            window.location.serch = "";
+            alert("Invalid URL");
           }
         }
     </script>
