@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content='True' name='HandheldFriendly'/>
+    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport'/>
+    <title>
+        {{#if bans.communityBanned}}
+            Steam Report - Community Banned
+        {{else if privateProfile}}
+            Steam Report - Private Profile
+        {{else if NoGamesOwned}}
+            Steam Report - No Games Owned
+        {{/if}}
+    </title>
+    <link rel="stylesheet" href="../styling/redirect.css" />
+    <link rel="icon" type="image/x-icon" href="https://www.pngkey.com/png/full/332-3321794_steam-logo-png-transparent-ebay-steam-gift-card.png">
+</head>
+
+<body>
+    <!--<button class="button button1" onclick="location.href='http://steamreport.info/'">-->
+    <button class="button button1" onclick="location.href='http://localhost:3000/'">
+        <span><p><-- Back</p></span>
+    </button>
+
+    <div class="centered">
+        {{#if bans.communityBanned}}
+            <div id="rectangle_1">
+                <h2>Steam set your Profile to Private</h2>
+                <h3>(You are community banned, resulting in your profile automatically being privated)</h3>
+            </div>
+        {{else if privateProfile}}
+            <div id="rectangle_3">
+                <h1>Your Profile is Private</h1>
+                <h3>(If you are trying to access your profile, unprivating your account will let you view your Steam Report Page)</h3>
+            </div>
+        {{else if NoGamesOwned}}
+        <div id="rectangle_2">
+            <h1>Your games could not be accessed</h1>
+            <h3>(This could occur if you do not own any games or have your games privated)</h3>
+        </div>
+        {{/if}}
+    </div>
+    
+</body>
+
+</html>

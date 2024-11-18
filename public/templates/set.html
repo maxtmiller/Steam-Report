@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content='True' name='HandheldFriendly'/>
+    <meta http-equiv="Content-Security-Policy" content="style-src 'self' http://localhost:3000;">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+    <title>
+        {{#if admin}}
+            Steam Report Pro - Profile Set
+        {{else}}
+            Steam Report - Profile Set
+        {{/if}}
+    </title>
+        <link rel="stylesheet" type="text/css" href="../styling/set.css" />
+        <link rel="icon" type="image/x-icon" href="https://www.pngkey.com/png/full/332-3321794_steam-logo-png-transparent-ebay-steam-gift-card.png">
+</head>
+
+<body>
+    <button type="button" onclick="myFunction()">
+        <div class="centered">
+            <a href="#" class="steambutton"><span>Get Steam Report</span><div class="icon">
+                <div class="fa">
+                    <img src="https://logoeps.com/wp-content/uploads/2014/02/23822-steam-logo-games-website-icon-vector-icon-vector-eps.png" alt="" width = "31px" height = "30px"/>
+                </div>
+            </div></a>
+        </div>
+    </button>
+
+    <script>
+
+        function isValidSteamURL(url) {
+            const profileRegex = /^https:\/\/steamcommunity\.com\/profiles\/.+$/;
+            const idRegex = /^https:\/\/steamcommunity\.com\/id\/.+$/;
+            return profileRegex.test(url) || idRegex.test(url);
+        }
+
+        function myFunction() {
+          let URL = prompt("Please enter a Steam URL", "https://steamcommunity.com/profiles/76561199103486871/");
+          if (URL != null && isValidSteamURL(URL)) {
+            window.location.search = "?login=" + URL
+          } else {
+            window.location.serch = "";
+            alert("Invalid URL");
+          }
+        }
+    </script>
+</body>
+
+</html>

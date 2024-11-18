@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content='True' name='HandheldFriendly'/>
+    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport'/>
+    <title>Banned</title>
+    <link rel="stylesheet" href="../styling/banned.css" />
+</head>
+
+<body>
+    <div class="centered">
+        {{#if bans.communityBanned}}
+        <h1 style="color:red;">This user has previously been community Banned.<br>This is typically a result of toxic behaviour within Steam Forums or Steam User Comments.</h1>
+		<div class="color"><a href="https://help.steampowered.com/en/faqs/view/4F62-35F9-F395-5C23" target="_blank">Click here to learn more on Community bans</a>
+		{{else if bans.vacBanned}}
+        <h1 style="color:red;">This user has previously been VAC Banned.<br>This indicates that the user has cheated on a VAC secure server before</h1>
+		<div class="color"><a href="https://help.steampowered.com/en/faqs/view/571A-97DA-70E9-FF74" target="_blank">Click here to learn more on VAC Bans</a>
+		{{else if bans.gameBans}}
+        <h1 style="color:red;">This user has previously been Game Banned.<br>This indicates that the user has been banned from a specific game by a developer before</h1>
+        <div class="color"><a href="https://help.steampowered.com/en/faqs/view/4F62-35F9-F395-5C23" target="_blank">Click here to learn more on Game bans</a>
+		{{else}}
+		<h1 style="color:red;">This user has previously been Trade/Economy Banned.<br>This indicates that the user was likely involved within fraudulent activity involving scamming users for items</h1>
+		<div class="color"><a href="https://help.steampowered.com/en/faqs/view/4F62-35F9-F395-5C23" target="_blank">Click here to learn more on Trade bans</a>
+        {{/if}}
+    </div>
+	
+	 <button class="button button1" onclick="location.href='http://localhost:3000/?login='+url">
+        <span><p>"Continue to Home Page -->"</p></span>
+    </button>
+</body>
+
+</html>
