@@ -1,11 +1,11 @@
 # SteamReport
 
-## 📚 Introduction 📚
+## 📚 &nbsp;&nbsp;&nbsp;**Introduction**&nbsp;&nbsp;&nbsp; 📚
 **SteamReport** is a web platform designed to enhance the gaming experience by providing users with organized, relevant, and personalized information about their Steam accounts and games. By leveraging the Steam Web API, SteamReport helps users explore their game libraries, track their gaming habits, and discover new games that match their preferences.
 
 ---
 
-## 🎨 Features 🎨
+## 🎨 &nbsp;&nbsp;&nbsp;**Features**&nbsp;&nbsp;&nbsp; 🎨
 1. **Game Management**  
    - View games owned and recently played.  
    - Sort games by price, genre, or category for easy browsing.  
@@ -25,7 +25,7 @@
 
 ---
 
-## 🛠️ Technical Overview 🛠️
+## 🛠️ &nbsp;&nbsp;&nbsp;**Technical Overview**&nbsp;&nbsp;&nbsp; 🛠️
 - **Backend**:  
   - **Node.js**: JavaScript runtime for server-side development.  
   - **Express.js**: Web application framework for building the backend.  
@@ -41,7 +41,7 @@
 
 ---
 
-## 🚀 Motivation 🚀
+## 🚀 &nbsp;&nbsp;&nbsp;**Motivation**&nbsp;&nbsp;&nbsp; 🚀
 SteamReport was created to simplify the overwhelming process of discovering and managing games in the vast Steam ecosystem. With thousands of games available, many users struggle to find games they truly enjoy, often wasting time and money on titles that don’t match their interests. By offering personalized recommendations and curated insights, SteamReport provides a practical solution that saves users’ resources and also enriches their gaming experience. The platform’s focus on organizing user and game data in an accessible way ensures that everyone, from casual gamers to enthusiasts, can make informed decisions about their next adventure.
 
 ---
